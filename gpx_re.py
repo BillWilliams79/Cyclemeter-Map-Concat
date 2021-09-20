@@ -44,12 +44,9 @@ for line in fileHandle:
 # the data is stuffed into a list of dictionaries
 #
 for line in fileHandle:
-    #cleanLine = line.lstrip()
-
     #
     # regular expression method of finding values
     #
-    
     lat = re.findall('lat="([0-9.-]+)', line)
     if lat != []:
        dataList.append(dict({'latitude' : lat[0]}))
@@ -115,14 +112,12 @@ for index, gps_point in enumerate(dataList):
 
 
 
-#print(gps_distance) 
 print('GPS points stripped @ %dm\t: %d' % (GPS_POINT_DELTA, points_stripped))  
 print('GPS points after distance strip\t: %d' % (len(dataList)))
 percent_reduction = round(100 * (points_stripped / imported_points), 1)
 
 print('GPS points reduced %g percent' % (percent_reduction))  
 points_df = pd.DataFrame(gps_distance, index=None, columns=['Distance'])
-#print(points_df)
 print('\nMean\t: %f\nMedian\t: %f\nMin\t: %f\nMax\t: %f' % (points_df.mean(), points_df.median(), points_df.min(), points_df.max()))
 
 
@@ -142,23 +137,6 @@ template = Env.get_template('child.txt')
 handle = open(etl_name.lower() + ".gpx", "w")
 handle.write(template.render(ride_title = etl_name, gps_list = dataList))
 handle.close()
-
-
-
-#
-# instantiate, print and then write to file in CSV format
-#
-#print(dataList)
-#myDataFrame = pd.DataFrame(dataList, index = None, columns = ['latitude', 'longitude', 'elevation', 'gpstime'])
-
-#print(myDataFrame)
-#print(myDataFrame.size)
-
-#print(latCount, lonCount, eleCount, gpsTimeCount)
-
-#myDataFrame.to_csv('temp.csv')
-
-#  geodesic()
 
 
 print('the end')
