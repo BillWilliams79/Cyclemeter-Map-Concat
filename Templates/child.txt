@@ -1,0 +1,10 @@
+{% extends "strava_gpx_base.txt" %}
+
+{% block content %}
+{% for gps_point in gps_list %}
+   <trkpt lat="{{ gps_point['latitude'] }}" lon="{{ gps_point['longitude'] }}">
+    <ele>{{ gps_point['elevation'] }}</ele>
+    <time>{{ gps_point['gpstime'] }}</time>
+   </trkpt>
+{% endfor %}
+{% endblock %}
