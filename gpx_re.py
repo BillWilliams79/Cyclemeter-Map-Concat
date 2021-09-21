@@ -1,11 +1,6 @@
 #
 # imports
 #
-import numpy as np
-
-import re as re
-from jinja2 import Environment, FileSystemLoader
-
 import gps_transform, gps_extract, gps_load
 
 #
