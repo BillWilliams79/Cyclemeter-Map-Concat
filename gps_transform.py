@@ -1,5 +1,5 @@
 from geopy import distance
-import pandas as pd
+#import pandas as pd
 
 #
 # precision optimizer - drop 2 digits from lat, lon, and ele.
@@ -30,7 +30,8 @@ def distance_optimizer(etl_op):
         while True:
             if index == len(points_list) - 1:
                 #
-                # break loop when last element detected
+                # break when last element detected, to avoid overrunning list using
+                # the next index 
                 #
                 etl_op["current_points"] = count
                 break
@@ -47,22 +48,3 @@ def distance_optimizer(etl_op):
                 count += 1
                 #break the while
                 break
-        #
-        # debug code prints lat/lon and delta for points
-        #
-        #if index == 0:
-        #    print("\npoint 0 lat lon : %s %s\npoint 1 lat lon : %s %s\ndistance (m) : %f\n" % 
-        #            (gps_point['latitude'], gps_point['longitude'], dataList[index+1]['latitude'], dataList[index+1]['longitude'], round(mydistance.m, 1)))
-
-
-    #
-    # stats printing that probably belong somewhere else
-    #
-    print('GPS points stripped @ {gps_min_delta}m\t: {delta_points_stripped}'.format(**etl_op))  
-    print('GPS points after distance strip\t: %d' % (len(points_list)))
-    percent_reduction = round(100 * (etl_op["delta_points_stripped"] / etl_op["imported_points"]), 1)
-
-    print('GPS points reduced %g percent' % (percent_reduction))  
-    points_df = pd.DataFrame(gps_distance, index=None, columns=['Distance'])
-    print('\nMean\t: %f\nMedian\t: %f\nMin\t: %f\nMax\t: %f' % (points_df.mean(), points_df.median(), points_df.min(), points_df.max()))
-

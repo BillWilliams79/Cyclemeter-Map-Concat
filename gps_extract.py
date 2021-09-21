@@ -4,7 +4,7 @@ def gpx_file_extract(etl_op):
 
     fileHandle = open(etl_op["extract_file_name"])
     points_list = etl_op["gps_points"]
-    count = 0
+
     latCount = 0
     lonCount = 0
     eleCount = 0
@@ -58,4 +58,4 @@ def gpx_file_extract(etl_op):
             #    break        
 
     etl_op["imported_points"] = len(points_list)
-    print('\nGPS points imported\t\t: %d' % etl_op["imported_points"] )
+   
