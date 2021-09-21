@@ -6,7 +6,7 @@ import numpy as np
 import re as re
 from jinja2 import Environment, FileSystemLoader
 
-import gps_transform, gps_extract
+import gps_transform, gps_extract, gps_load
 
 #
 # User Input
@@ -21,7 +21,6 @@ dataList = list()
 #
 gps_extract.gpx_file_extract(fileName, dataList)
 
-
 #
 # GPS Transforms
 #
@@ -29,17 +28,8 @@ gps_transform.distance_optimizer(dataList, GPS_POINT_DELTA)
 gps_transform.precision_optimizer(dataList, 2)
 
 #
-# Now store gps points in strava gpx file using Jinja2
+# GPS load
 #
-file_loader = FileSystemLoader('Templates')
-Env = Environment(loader=file_loader, trim_blocks=True)
-
-template = Env.get_template('child.txt')
-
-
-handle = open(etl_name.lower() + ".gpx", "w")
-handle.write(template.render(ride_title = etl_name, gps_list = dataList))
-handle.close()
-
+gps_load.gpx_file_load(dataList, etl_name)
 
 print('the end')
