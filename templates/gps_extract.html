@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block head %} 
+
+{% endblock %}
+
+{% block body %} 
+<h1> GPX File Translation Software </h1>
+<p class="explainer"> This page inputs a GPX file, reduces/modifies the data in the file
+    and then writes back out to a new GPX file.</p>
+<form method="POST", action="/transferload">
+    <label for="file_name">File Name</label>
+    <input type="text" id="file_name" name="fname" value="">
+    <br>
+    <label for="min_dist">Minimum distance between points in meters</label>
+    <input type="text" id="min_dist" name="mdist" value="">
+    <br>
+    <input type="submit" value="Continue"></submit>
+</form>
+{% endblock %}
