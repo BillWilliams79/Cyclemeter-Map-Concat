@@ -15,6 +15,9 @@
     <label for="mdist">Minimum distance between points in meters</label>
     <input type="text" id="mdist" name="min_dist" value="">
     <br>
-    <input type="submit" value="Continue"></submit>
+    <label for="precop">Precision reduction (range 0 to 3) :</label>
+    <input type="number" id="precop" name="precision_optimizer" min="0" max="3" value="2">
+    <br>
+    <input type="submit" value="Read File"></submit>
 </form>
 {% endblock %}
