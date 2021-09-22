@@ -29,7 +29,7 @@ gpx_etl_op["load_file_name"] = 'Strava GPX {gps_min_delta}m delta'.format(**gpx_
 #
 gps_extract.gpx_file_extract(gpx_etl_op)
 
-print('\nGPS Points extracted\t\t: {imported_points} (file: {extract_file_name})'.format(**gpx_etl_op))
+print('\nGPS points extracted\t\t: {imported_points} (file: {extract_file_name})'.format(**gpx_etl_op))
 
 #
 # GPS Transform
@@ -38,9 +38,9 @@ gps_transform.distance_optimizer(gpx_etl_op)
 gps_transform.precision_optimizer(gpx_etl_op)
 
 print('GPS points stripped @ {gps_min_delta}m\t: {delta_points_stripped}'.format(**gpx_etl_op))  
-print('GPS points after distance strip\t: {delta_points_stripped}'.format(**gpx_etl_op))
+print('GPS points after distance strip\t: {current_points}'.format(**gpx_etl_op))
 percent_reduction = round(100 * (gpx_etl_op["delta_points_stripped"] / gpx_etl_op["imported_points"]), 1)
-print('GPS points reduced %g percent' % (percent_reduction))  
+print('\nGPS points reduced %g percent' % (percent_reduction))  
 
 #
 # GPS load
@@ -51,9 +51,9 @@ gps_load.gpx_file_load(gpx_etl_op)
 # Print the items in the main dictionary for debug purposes
 # Skipping the list of points of course
 #
-print(' ')
-for item in gpx_etl_op:
-    if item != "gps_points":
-        print(f'{item} : {gpx_etl_op[item]}')
+#print(' ')
+#for item in gpx_etl_op:
+#    if item != "gps_points":
+#        print(f'{item} : {gpx_etl_op[item]}')
 
-print('the end')
+print('\nThe end')

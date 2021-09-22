@@ -9,6 +9,8 @@
 <p> GPS file name : {{ etl_op["extract_file_name"] }}</p>
 <p> GPS minimum distance : {{ etl_op["gps_min_delta"] }}</p>
 <p> Total points extracted : {{ etl_op["imported_points"] }}</p>
-
-
+<br>
+<form method="POST", action="/gps_load">
+    <input type="submit" value="Continue"></submit>
+</form>
 {% endblock %}
