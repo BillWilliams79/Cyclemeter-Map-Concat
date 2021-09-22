@@ -1,4 +1,9 @@
 body {
-    margin: 0;
+    margin: 10;
     font-family: sans-serif;
+}
+
+p.explainer {
+    margin: 25;
+    color: purple;
 }
