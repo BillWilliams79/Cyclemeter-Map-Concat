@@ -8,6 +8,12 @@ def precision_optimizer(etl_op):
 
     precision_reduction = etl_op["gps_precision_reduction"]
 
+    if precision_optimizer == 0:
+        #
+        # no work to be done as request is to remove 0 precision
+        #
+        return
+
     for point in etl_op["gps_points"]:
        point['latitude']  = point['latitude'][0:len(point['latitude']) - precision_reduction]
        point['longitude'] = point['longitude'][0:len(point['longitude']) - precision_reduction]
