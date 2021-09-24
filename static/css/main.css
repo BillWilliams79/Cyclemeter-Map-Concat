@@ -1,13 +1,17 @@
 body {
-    margin: 10;
     font-family: sans-serif;
+    margin: 50px;
 }
 
 p.explainer {
-    margin: 25;
     color: purple;
 }
 
 p.lia {
     color:orangered;
+}
+
+form.extractform {
+    padding: 10px;
+    margin-right: 400px;
 }
