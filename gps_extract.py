@@ -18,9 +18,16 @@ def gpx_file_extract(etl_op):
         date = re.findall('<time>([0-9:T\-]+)', line)
         if len(date) > 0:
             etl_op["track_date_time"] = dt.fromisoformat(date[0])
-            print(etl_op["track_date_time"])
+            #
+            # just using the most brutal month granular adjustment for DST
+            # TODO: actually implement correct DST adjustment
+            #
+            if dt.month in ('1', '2', '3', '11', '12'):
+                tzadjust = datetime.timedelta(hours = 8)
+            else:
+                tzadjust = datetime.timedelta(hours = 7)
+            etl_op["track_date_time"] = etl_op["track_date_time"] - tzadjust
             break
-
 
         if len(re.findall('</metadata>', line)) > 0:
             # metadata end tag, stop processing.
@@ -58,7 +65,9 @@ def gpx_file_extract(etl_op):
             points_list[len(points_list) - 1]['gpstime'] = gpsTime[0]
             gpsTimeCount += 1
         
-            #this debug code breaks the ingest points processing after 5 gps points
+            #
+            # DEBUG: breaks points extraction processing after 5 gps points
+            #
             #count = count + 1
             #if count == 5:
             #    print(points_list)

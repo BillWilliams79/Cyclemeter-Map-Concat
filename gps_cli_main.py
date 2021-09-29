@@ -33,8 +33,8 @@ gps_extract.gpx_file_extract(gpx_etl_op)
 #
 # CLI screen prints post extraction
 #
-print(gpx_etl_op["track_date_time"].strftime('GPS track from %A %B %d, %Y at %I:%M%p'))
-print('\nGPS points extracted\t\t: {imported_points} (file: {extract_file_name})'.format(**gpx_etl_op))
+print(gpx_etl_op["track_date_time"].strftime('\nGPS track from %A %B %d, %Y @ %I:%M%p'))
+print('GPS points extracted\t\t: {imported_points} (file: {extract_file_name})'.format(**gpx_etl_op))
 
 #
 # GPS Transform
