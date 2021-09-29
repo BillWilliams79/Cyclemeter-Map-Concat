@@ -17,11 +17,12 @@ gpx_etl_op["imported_points"] = 0
 gpx_etl_op["delta_points_stripped"] = 0
 gpx_etl_op["current_points"] = 0
 gpx_etl_op["track_date_time"] = 0
+gpx_etl_op["gps_track_name"] = ''
 
 #
 # User Input
 #
-gpx_etl_op["extract_file_name"] = input('Enter name of GPX file : ')
+gpx_etl_op["extract_file_name"] = input('\nEnter name of GPX file : ')
 gpx_etl_op["gps_min_delta"] = int(input('Enter minimum distance between GPS points in meters : '))
 gpx_etl_op["gps_precision_reduction"] = 2
 gpx_etl_op["load_file_name"] = 'Strava GPX {gps_min_delta}m delta'.format(**gpx_etl_op)
@@ -33,7 +34,8 @@ gps_extract.gpx_file_extract(gpx_etl_op)
 #
 # CLI screen prints post extraction
 #
-print(gpx_etl_op["track_date_time"].strftime('\nGPS track from %A %B %d, %Y @ %I:%M%p'))
+print('\n\nGPS track name\t\t\t: {gps_track_name}'.format(**gpx_etl_op))
+print(gpx_etl_op["track_date_time"].strftime('GPS track date\t\t\t: %A %B %d, %Y @ %I:%M%p'))
 print('GPS points extracted\t\t: {imported_points} (file: {extract_file_name})'.format(**gpx_etl_op))
 
 #

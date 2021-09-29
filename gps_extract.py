@@ -39,12 +39,17 @@ def gpx_file_extract(etl_op):
     # process file line by line looking for track points and eleveation data.
     # these three values consume two lines in gpx files with elevation
     # on the secone line. So lat/lon are collected first and then
-    # the data is stuffed into a list of dictionaries
+    # the data is stuffed into a list of dictionaries. 
+    # Also the name of the track is included in the points list. 
     #
     for line in fileHandle:
         #
         # regular expression method of finding values
         #
+        name = re.findall('<name>([a-z A-Z.,!?:;@&]+)', line)
+        if name != []:
+            etl_op["gps_track_name"] = name[0]
+
         lat = re.findall('lat="([0-9.-]+)', line)
         if lat != []:
             points_list.append(dict({'latitude' : lat[0]}))
