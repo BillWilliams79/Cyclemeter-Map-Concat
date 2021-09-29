@@ -5,6 +5,7 @@ import gps_transform, gps_extract, gps_load
 
 #
 # Data structures
+# TODO: create python object for this data structure.
 #
 gpx_etl_op = dict()
 gps_points = list()
@@ -15,6 +16,7 @@ gpx_etl_op["gps_points"] = gps_points
 gpx_etl_op["imported_points"] = 0
 gpx_etl_op["delta_points_stripped"] = 0
 gpx_etl_op["current_points"] = 0
+gpx_etl_op["track_date_time"] = 0
 
 #
 # User Input
@@ -28,7 +30,10 @@ gpx_etl_op["load_file_name"] = 'Strava GPX {gps_min_delta}m delta'.format(**gpx_
 # GPS Extract
 #
 gps_extract.gpx_file_extract(gpx_etl_op)
-
+#
+# CLI screen prints post extraction
+#
+print(gpx_etl_op["track_date_time"].strftime('GPS track from %A %B %d, %Y at %I:%M%p'))
 print('\nGPS points extracted\t\t: {imported_points} (file: {extract_file_name})'.format(**gpx_etl_op))
 
 #
@@ -36,6 +41,7 @@ print('\nGPS points extracted\t\t: {imported_points} (file: {extract_file_name})
 #
 gps_transform.distance_optimizer(gpx_etl_op)
 gps_transform.precision_optimizer(gpx_etl_op)
+
 
 print('GPS points stripped @ {gps_min_delta}m\t: {delta_points_stripped}'.format(**gpx_etl_op))  
 print('GPS points after distance strip\t: {current_points}'.format(**gpx_etl_op))
@@ -48,7 +54,7 @@ print('\nGPS points reduced %g percent' % (percent_reduction))
 gps_load.gpx_file_load(gpx_etl_op)
 
 #
-# Print the items in the main dictionary for debug purposes
+# DEBUG: Print the items in the main dictionary for debug purposes
 # Skipping the list of points of course
 #
 #print(' ')

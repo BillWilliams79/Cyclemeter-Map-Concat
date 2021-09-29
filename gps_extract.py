@@ -1,4 +1,4 @@
-import re
+import re, datetime
 
 def gpx_file_extract(etl_op):
 
@@ -14,6 +14,13 @@ def gpx_file_extract(etl_op):
     # commence parsing the metadata section first before parsing the GPS points
     #
     for line in fileHandle:
+        dt = datetime.datetime
+        date = re.findall('<time>([0-9:T\-]+)', line)
+        if len(date) > 0:
+            etl_op["track_date_time"] = dt.fromisoformat(date[0])
+            print(etl_op["track_date_time"])
+            break
+
 
         if len(re.findall('</metadata>', line)) > 0:
             # metadata end tag, stop processing.
