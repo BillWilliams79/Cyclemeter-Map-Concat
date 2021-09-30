@@ -5,14 +5,12 @@
 {% endblock %}
 
 {% block body %} 
-<p class="explainer"> Your file has been translated according to the parameters below.
-    Select wether to continue and output the file or restart another GPS ETL operation.
+<p class="explainer"> Success! The new GPS track was saved as "{{ etl_op["load_file_name"] }}.gpx".
 </p>
-<form method="POST", action="/gps_complete">
+<form method="GET", action="/">
 
     <!-- implement file transform status here -->
 
     <input type="submit" value="Continue">
-    <input type="submit" formaction="/" formmethod="GET" value="Cancel">
 </form>
 {% endblock %}

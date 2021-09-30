@@ -18,6 +18,7 @@ def init_etl_op(etl_op):
     gpx_etl_op["current_points"] = 0
     gpx_etl_op["extract_file_name"] =''
     gpx_etl_op["load_file_name"] = ''
+    gpx_etl_op['gpx_track_name'] = ''
     gpx_etl_op["gps_points"].clear()
 
 @app.route("/")
@@ -29,15 +30,29 @@ def index():
 @app.route("/gps_transform", methods=["POST"])
 def gps_transform_web():
     if request.method == 'POST':
+        #
+        # parse user input values using POST method
+        #
         file_name = request.form.get("file_name")
         min_delta = int(request.form.get("min_dist"))
         precision_reduction = int(request.form.get("precision_optimizer"))
         gpx_etl_op["extract_file_name"] = file_name
         gpx_etl_op["gps_min_delta"] = min_delta
         gpx_etl_op["gps_precision_reduction"] = precision_reduction
+        gpx_etl_op["load_file_name"] = 'Strava GPX {gps_min_delta}m {gps_precision_reduction}pr delta'.format(**gpx_etl_op)
+        #
+        # extract and optimize
+        #
         gps_extract.gpx_file_extract(gpx_etl_op)
-        return render_template('gps_transform.html', etl_op=gpx_etl_op)
-    else:
+        gps_transform.distance_optimizer(gpx_etl_op)
+        gps_transform.precision_optimizer(gpx_etl_op)
+        gps_date = gpx_etl_op["track_date_time"].strftime('%A %B %d, %Y @ %I:%M%p')
+        percent_reduction = round(100 * (gpx_etl_op["delta_points_stripped"] / gpx_etl_op["imported_points"]), 1)
+        #
+        # render and continue
+        #
+        return render_template('gps_transform.html', etl_op=gpx_etl_op, gps_date = gps_date, pr = percent_reduction)
+    else:       
         redirect("/")    
 
 
@@ -47,8 +62,7 @@ def gps_load_web():
         #
         # GPS Transform
         #
-        gps_transform.distance_optimizer(gpx_etl_op)
-        gps_transform.precision_optimizer(gpx_etl_op)
+        gps_load.gpx_file_load(gpx_etl_op)
         return render_template('gps_load.html', etl_op=gpx_etl_op)
     else:
         redirect("/")
@@ -59,7 +73,6 @@ def gps_complete_web():
         #
         # GPS Transform
         #
-        gpx_etl_op["load_file_name"] = 'Strava GPX {gps_min_delta}m {gps_precision_reduction}pr delta'.format(**gpx_etl_op)
         gps_load.gpx_file_load(gpx_etl_op)
         return render_template('gps_complete.html', etl_op=gpx_etl_op)
     else:

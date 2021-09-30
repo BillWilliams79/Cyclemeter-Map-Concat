@@ -4,12 +4,22 @@
 
 {% endblock %}
 
-{% block body %} 
-<p class="lia"> GPS file name : {{ etl_op["extract_file_name"] }}</p>
-<p class="lia"> GPS minimum distance : {{ etl_op["gps_min_delta"] }}</p>
-<p class="lia"> Total points extracted : {{ etl_op["imported_points"] }}</p>
+{% block body %}
+<p class="explainer"> The GPS file has been translated with the results below. 
+    Please review and select to save the results or restart another ETL operation.
+</p>
 <br>
-<form method="POST", action="/gps_load">
-    <input type="submit" value="Continue"></submit>
+<p class="lia"> GPS track name : {{ etl_op["gps_track_name"] }} <br>
+                GPS track date : {{ gps_date }} <br>
+                GPS points extracted : {{ etl_op["imported_points"] }} (file: {{ etl_op["extract_file_name"]}}) <br>
+                GPS points stripped @ {{ etl_op["gps_min_delta"] }}m : {{ etl_op["delta_points_stripped"] }} <br>
+                GPS points after distance strip : {{ etl_op["current_points"] }} <br>
+                <br>
+                GPS points reduced {{ pr }} percent
+</p>
+<br>
+<form method="POST", action="/gps_load" >
+    <input class="xformbutton", type="submit" value="Save">
+    <input class="xformbutton", type="submit" formaction="/" formmethod="GET" value="Cancel">    
 </form>
 {% endblock %}

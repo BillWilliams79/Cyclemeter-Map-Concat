@@ -9,9 +9,17 @@ p.explainer {
 
 p.lia {
     color:orangered;
+    font-size: 18pt;
 }
 
 form.extractform {
+    width: 800px;
     padding: 10px;
     margin-right: 400px;
+}
+
+.xformbutton {
+    font-size: 18pt;
+    color: black;
+    background-color: orangered;
 }
