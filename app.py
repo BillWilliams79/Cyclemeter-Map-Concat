@@ -21,6 +21,11 @@ def init_etl_op(etl_op):
     gpx_etl_op['gpx_track_name'] = ''
     gpx_etl_op["gps_points"].clear()
 
+def init_etlop_df(df):
+    etlop_data_types = ['imported_points', "delta_points_stripped", "current_points", "extract_file_name"
+                        'load_file_name', 'gpx_track_name', 'gps_points']
+    df = pd.DataFrame(columns = etlop_data_types)
+
 @app.route("/")
 def index():
     init_etl_op(gpx_etl_op)
