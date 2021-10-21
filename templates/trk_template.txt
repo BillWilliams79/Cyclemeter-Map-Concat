@@ -1,0 +1,10 @@
+<trk>
+  <name>{{ ride_title }}</name>
+  <type>1</type>
+  <trkseg> 
+{% for key,gps_point in df.iterrows() %}
+   <trkpt lat="{{ gps_point['latitude'] }}" lon="{{ gps_point['longitude'] }}">
+   </trkpt>
+{% endfor %}
+  </trkseg>
+</trk>

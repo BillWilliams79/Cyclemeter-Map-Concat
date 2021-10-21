@@ -2,58 +2,102 @@
 # imports
 #
 import gps_transform, gps_extract, gps_load
+import pandas as pd
+import datetime, time
 
 #
 # Data structures
-# TODO: create python object for this data structure.
 #
-gpx_etl_op = dict()
-gps_points = list()
-gpx_etl_op["gps_points"] = gps_points
-#
-# initilize counters to zero
-#
-gpx_etl_op["imported_points"] = 0
-gpx_etl_op["delta_points_stripped"] = 0
-gpx_etl_op["current_points"] = 0
-gpx_etl_op["track_date_time"] = 0
-gpx_etl_op["gps_track_name"] = ''
+def init_etlop_df():
+    #
+    # set column indexes and initial values for a gps ETL operation.
+    #'', 'delta_points_stripped', '', 'gps_track_name', 'track_date_time',
+    etlop_data_types = ['extract_source_type', 'extract_file_name', 'gps_coord_precision', 'gps_min_delta',  
+                         'run_df', 'gps_df_list', 'gpx_name_string', 'gpx_date_string']
+    etlop_init_stat = [[ '', '', int(), int(),
+                         pd.DataFrame(), list(), '', datetime.datetime.now() ] ]
+    return pd.DataFrame(etlop_init_stat, columns = etlop_data_types)
 
 #
-# User Input
+# initialize ETL operations dataframe
 #
-gpx_etl_op["extract_file_name"] = input('\nEnter name of GPX file : ')
-gpx_etl_op["gps_min_delta"] = int(input('Enter minimum distance between GPS points in meters : '))
-gpx_etl_op["gps_precision_reduction"] = 2
-gpx_etl_op["load_file_name"] = 'Strava GPX {gps_min_delta}m delta'.format(**gpx_etl_op)
+etlop_df = init_etlop_df()
+
+# debugprint
+#with pd.option_context("display.max_rows", 10, "display.max_columns", 15, "display.min_rows", 10):
+#   print('\nPrint etlo_op dataframe initial creation.')
+#   print(etlop_df)
+
+#
+# User Input: import type, source name, GPS min delta, coordinate precision
+#
+etlop_df.at[0,"extract_source_type"] = input('\nEnter GPS ETL source format (cm or gpx): ')
+etlop_df.at[0,"extract_file_name"] = input('\nEnter GPS ETL source file name : ')
+etlop_df.at[0,"gps_min_delta"] = int(input('Enter minimum distance between GPS points in meters : '))
+etlop_df.at[0,"gps_coord_precision"] = int(input('Enter GPS coordinate precision (2-7) : '))
+
+#manually construct the load file name.
+etlop_df.at[0,"load_file_name"] = '{} {}m delta'.format(etlop_df.at[0,"extract_source_type"], etlop_df.at[0,"gps_min_delta"])
+
+#manually set the gpx overall name string
+etlop_df.at[0,"gpx_name_string"] = 'Bill and Tim Adventures'
+
+#debug print
+#with pd.option_context("display.max_rows", 10, "display.max_columns", 15, "display.min_rows", 10):
+#    print("\nDisplay etlop_df after user input and prior to extract.")
+#    print(etlop_df)
 
 #
 # GPS Extract
 #
-gps_extract.gpx_file_extract(gpx_etl_op)
+if etlop_df.at[0,"extract_source_type"] == 'gpx':
+  #todo
+  #gps_extract.gpx_file_extract(etlop_df)
+  pass
+
+else:
+    #working
+    gps_extract.cm_sqlite3_extract(etlop_df)
+
+#debug print
+#with pd.option_context("display.max_rows", 10, "display.max_columns", 20, "display.min_rows", 10):
+#    print("\nDisplay run_df after extract.")
+#    print(etlop_df.at[0,'run_df'])
+#    print("\nPrint gps points list")
+#    print(etlop_df.at[0, 'gps_points'])
+
 #
 # CLI screen prints post extraction
 #
-print('\n\nGPS track name\t\t\t: {gps_track_name}'.format(**gpx_etl_op))
-print(gpx_etl_op["track_date_time"].strftime('GPS track date\t\t\t: %A %B %d, %Y @ %I:%M%p'))
-print('GPS points extracted\t\t: {imported_points} (file: {extract_file_name})'.format(**gpx_etl_op))
+print('\n\nGPS track name\t\t\t: {}'.format(etlop_df.at[0,"gpx_name_string"]))
+print(etlop_df.at[0,"gpx_date_string"].strftime('GPS track date\t\t\t: %A %B %d, %Y @ %I:%M%p'))
+#print('GPS points extracted\t\t: {} (file: {})'.format(etlop_df.at[0,'imported_points'], etlop_df.at[0,'extract_file_name']))
 
 #
 # GPS Transform
-#
-gps_transform.distance_optimizer(gpx_etl_op)
-gps_transform.precision_optimizer(gpx_etl_op)
+#todo
+#gps_transform.precision_optimizer(gpx_etl_op)
+gps_transform.cm_data_format(etlop_df)
+gps_transform.distance_optimizer(etlop_df)
 
 
-print('GPS points stripped @ {gps_min_delta}m\t: {delta_points_stripped}'.format(**gpx_etl_op))  
-print('GPS points after distance strip\t: {current_points}'.format(**gpx_etl_op))
-percent_reduction = round(100 * (gpx_etl_op["delta_points_stripped"] / gpx_etl_op["imported_points"]), 1)
-print('\nGPS points reduced %g percent' % (percent_reduction))  
+#with pd.option_context("display.max_rows", 10, "display.max_columns", 20, "display.min_rows", 10):
+#    print("\nDisplay run_df after Transform.")
+#    print(etlop_df.at[0,'run_df'])
+#    print("\nPrint gps points list")
+#    print(etlop_df.at[0, 'gps_points'])
+
+
+
+#print('GPS points stripped @ {}m\t: {}'.format(etlop_df.at[0,'gps_min_delta'], etlop_df.at[0,'delta_points_stripped']))  
+#print('GPS points after distance strip\t: {}'.format(etlop_df.at[0,"current_points"]))
+#percent_reduction = round(100 * etlop_df.at[0,'delta_points_stripped'] / etlop_df.at[0,'imported_points'], 1)
+#print('\nGPS points reduced %g percent' % (percent_reduction))  
 
 #
 # GPS load
-#
-gps_load.gpx_file_load(gpx_etl_op)
+#todo
+gps_load.gpx_file_load_trk(etlop_df)
 
 #
 # DEBUG: Print the items in the main dictionary for debug purposes

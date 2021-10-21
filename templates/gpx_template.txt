@@ -1,0 +1,5 @@
+{% extends "gpx_base.txt" %}
+
+{% block content %}
+{{ trk_renders }}
+{% endblock %}
