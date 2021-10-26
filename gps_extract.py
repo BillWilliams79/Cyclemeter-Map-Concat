@@ -1,6 +1,7 @@
 import re, datetime
 import pandas as pd
 import sqlite3
+import itertools
 
 def gpx_file_extract(etl_op):
 
@@ -203,7 +204,7 @@ def cm_sqlite3_extract(etlop_df):
                         JOIN
                             route USING(routeID)
                         WHERE
-                            run.routeID=56;
+                            run.routeID=56
                     """
 
     #
@@ -219,11 +220,25 @@ def cm_sqlite3_extract(etlop_df):
     run_df['extracted_points'] = 0
     run_df['current_points'] = 0
     run_df['stripped_points'] = 0
- 
+    run_df['line_color_id'] = ''
+    #run_df['line_color'] = itertools.cycle(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist())
+    #print(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist())
+    #run_df.assign(line_color=lambda x: itertools.cycle(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist()))
+
+    #def line_color_gen():
+    #    yield itertools.cycle(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist())
+
+    #print(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist())
+
+    #lcg = line_color_gen()
+    color_cycle = itertools.cycle(etlop_df.at[0,"line_descriptor_df"]['line_color_id'].tolist())
+    for run in run_df.itertuples():
+        run_df.at[run.Index,'line_color_id'] = next(color_cycle)
+
     #
     # use list comprehension to iterate over the runIDs and build a list of dataframes with GPS points 
-    #
-    etlop_df.at[0,"gps_df_list"] = [pd.read_sql_query('SELECT * FROM coordinate WHERE runID={}'.format(content), con) for label, content in etlop_df.at[0,"run_df"]['runID'].items()]
+    #todo security
+    etlop_df.at[0,"gps_df_list"] = [pd.read_sql_query('SELECT * FROM coordinate WHERE runID={}'.format(runID), con) for label, runID in etlop_df.at[0,"run_df"]['runID'].items()]
 
     # calculate the number of points extracted from each run, which is also the current_points
     for index, points_df in enumerate(etlop_df.at[0, "gps_df_list"]):

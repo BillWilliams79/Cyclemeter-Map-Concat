@@ -15,17 +15,29 @@ def gpx_file_load(etl_op):
     handle.write(template.render(ride_title = etl_op["load_file_name"], gps_list = etl_op["gps_points"]))
     handle.close()
 
-def kml_file_load(etl_op):
+def kml_file_load(etlop_df):
+    
+    run_df = etlop_df.at[0,'run_df']
+    points_list = etlop_df.at[0,'gps_df_list']
+
     #
-    # Now store gps points in a kml file using Jinja2
+    # Now store gps points in kml file using Jinja2
     #
     file_loader = FileSystemLoader('Templates')
     Env = Environment(loader=file_loader, trim_blocks=True)
 
-    kml_template = Env.get_template('kml_file_template.txt')
+    kml_template = Env.get_template('kml_base_template.kml')
+ 
+    print('{}.{}'.format(etlop_df.at[0,'load_file_name'],etlop_df.at[0,'load_file_type']))
+    handle = open('{}.{}'.format(etlop_df.at[0,'load_file_name'],etlop_df.at[0,'load_file_type']), "w")
 
-    handle = open(etl_op["load_file_name"].lower() + ".kml", "w")
-    handle.write(kml_template.render(ride_title = etl_op["load_file_name"], gps_list = etl_op["gps_points"]))
+    kml_render = kml_template.render(etlop_df = etlop_df,
+                                        run_df = run_df,
+                                        points_df_list = points_list,
+                                        gpx_name_string = etlop_df.at[0, 'gpx_name_string'],
+                                        gpx_date_string = etlop_df.at[0, 'gpx_date_string'])
+
+    handle.write(kml_render)
     handle.close()
 
 def gpx_file_load_trk(etlop_df):
@@ -42,7 +54,7 @@ def gpx_file_load_trk(etlop_df):
     Env = Environment(loader=file_loader, trim_blocks=True)
 
     gpx_template = Env.get_template('gpx_template.txt')
-    trk_template = Env.get_template('trk_template.txt')
+    trk_template = Env.get_template('gpx_trk_template.txt')
 
     handle = open("BillandTimAdventures.gpx", "w")
 
