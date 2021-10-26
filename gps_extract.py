@@ -167,6 +167,7 @@ def gpx_file_extract_to_df(etl_op):
 
     etl_op["imported_points"] = len(points_list)
 
+
 def cm_sqlite3_extract(etlop_df):
 
     #
@@ -205,6 +206,8 @@ def cm_sqlite3_extract(etlop_df):
                             route USING(routeID)
                         WHERE
                             run.routeID=56
+                        LIMIT
+                            10
                     """
 
     #
@@ -221,20 +224,13 @@ def cm_sqlite3_extract(etlop_df):
     run_df['current_points'] = 0
     run_df['stripped_points'] = 0
     run_df['line_color_id'] = ''
-    #run_df['line_color'] = itertools.cycle(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist())
-    #print(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist())
-    #run_df.assign(line_color=lambda x: itertools.cycle(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist()))
 
-    #def line_color_gen():
-    #    yield itertools.cycle(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist())
-
-    #print(etlop_df.at[0,"line_descriptor_df"]['line_color'].tolist())
-
-    #lcg = line_color_gen()
+    # per ride color assignment
     color_cycle = itertools.cycle(etlop_df.at[0,"line_descriptor_df"]['line_color_id'].tolist())
     for run in run_df.itertuples():
         run_df.at[run.Index,'line_color_id'] = next(color_cycle)
-
+ 
+ 
     #
     # use list comprehension to iterate over the runIDs and build a list of dataframes with GPS points 
     #todo security

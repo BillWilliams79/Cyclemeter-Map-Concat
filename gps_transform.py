@@ -94,6 +94,19 @@ def distance_optimizer(etlop_df):
         #print('MIN DIST Complete extracted:current:dropped {}:{}:{}'.format(run_df.at[index,"extracted_points"],run_df.at[index,"current_points"],run_df.at[index, "stripped_points"]))
         #print(points_df.head(6))            
 
+def startTime_tz_adjust(startTime):
+            #
+            # just using the most brutal month granular adjustment for DST
+            # TODO: actually implement correct DST adjustment
+            #
+            dt = datetime.datetime.fromisoformat(startTime)
+
+            if dt.month in ('1', '2', '3', '11', '12'):
+                tzadjust = datetime.timedelta(hours = 8)
+            else:
+                tzadjust = datetime.timedelta(hours = 7)
+            
+            return dt - tzadjust
 
 def cm_data_format(etlop_df):
     
@@ -105,12 +118,15 @@ def cm_data_format(etlop_df):
     dt = datetime.datetime
     dt_time = datetime.time
 
+    
+
     # limit stopped time to 23 hours
     df['stoppedTime'] = df['stoppedTime'].apply(lambda stoppedTime: min(stoppedTime, 23*60*60))
 
     # xlat startTime from isoformat to gis format
-    df['startTime'] = df['startTime'].apply(lambda startTime: dt.fromisoformat(startTime).strftime('%Y-%m-%dT%H:%M:%SZ') )
-
+    #df['startTime'] = df['startTime'].apply(lambda startTime: dt.fromisoformat(startTime).strftime('%Y-%m-%dT%H:%M:%SZ') )
+    df['startTime'] = df['startTime'].apply(lambda startTime: startTime_tz_adjust(startTime))
+    df['formatted_startTime'] = df['startTime'].apply(lambda startTime: startTime.strftime('%A %b %d, %Y @ %I:%m%p'))
     # convert cyclemeter's time format of seconds to H:M:S using datetime.
     df['runTime'] = df['runTime'].apply(lambda runTime: dt_time(hour = int(int(runTime) / 3600), 
                                                                 minute = int(int(int(runTime) % 3600) / 60), 
