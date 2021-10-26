@@ -206,8 +206,6 @@ def cm_sqlite3_extract(etlop_df):
                             route USING(routeID)
                         WHERE
                             run.routeID=56
-                        LIMIT
-                            10
                     """
 
     #
