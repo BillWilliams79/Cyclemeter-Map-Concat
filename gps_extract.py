@@ -208,10 +208,33 @@ def cm_sqlite3_extract(etlop_df):
                             run.routeID=56
                     """
 
+    kyle_extract_sql = """
+                        SELECT
+                            run.runID,
+                            run.routeID,
+                            route.name,
+                            startTime,
+                            startTimeZone,
+                            runTime,
+                            stoppedTime,
+                            distance,
+                            ascent,
+                            descent,
+                            calories,
+                            maxSpeed,
+                            notes
+                        FROM
+                            run
+                        JOIN
+                            route USING(routeID)
+                        WHERE
+                            run.notes LIKE '%jimmy%'
+                    """
+
     #
     # extract cyclemeter run into a dataframe where each row is a separate run
     #
-    etlop_df.at[0,"run_df"] = pd.read_sql_query(cm_extract_sql, con)
+    etlop_df.at[0,"run_df"] = pd.read_sql_query(kyle_extract_sql, con)
     # use temp option_context to alter display details of a pandas dataframe
     #with pd.option_context("display.max_rows", 20, "display.max_columns", 15, "display.min_rows", 20):
     #    print(etlop_df.at[0,"run_df"] )
@@ -240,5 +263,5 @@ def cm_sqlite3_extract(etlop_df):
         run_df.at[index,"extracted_points"] = num_rows
         run_df.at[index,"current_points"] = num_rows
 
-    with pd.option_context("display.max_rows", 20, "display.max_columns", 15, "display.min_rows", 20):
+    with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
         print(run_df)

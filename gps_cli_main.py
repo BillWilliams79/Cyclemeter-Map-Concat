@@ -26,7 +26,7 @@ def init_etlop_df():
     return pd.DataFrame(etlop_initial_values, columns = etlop_column_names)
 
 
-def init_gis_descriptors():
+def init_rainbow_descriptors():
   #
   # brutal hard coding of color values
   #
@@ -52,11 +52,33 @@ def init_gis_descriptors():
 
   etlop_df.at[0,'icon_descriptor_df'] = pd.DataFrame(icon_descriptor_list, columns = icon_column_list)
   etlop_df.at[0,'line_descriptor_df'] = pd.DataFrame(line_descriptor_list, columns = line_column_list)  
+
+def init_blue_descriptors():
+  #
+  # brutal hard coding of color values
+  #
+  icon_column_list = ['icon_type', 'icon_color', 'icon_color_id']
+  icon_descriptor_list = [[ '1522', 'ff4c2503', '03254c' ], # dark blue
+                          [ '1522', 'ffb16711', '1167b1' ], # 
+                          [ '1522', 'ffcd7b18', '187bcd' ], #  
+                          [ '1522', 'fff49d2a', '2a9df4' ], #  
+                          [ '1522', 'ff807868', '687880' ]] # very lite blue
+
+  line_column_list = ['line_color', 'line_color_id']
+  line_descriptor_list = [['ff4c2503', '03254c' ], # dark blue
+                          ['ffb16711', '1167b1' ], # 
+                          ['ffcd7b18', '187bcd' ], #  
+                          ['fff49d2a', '2a9df4' ], #  
+                          ['ff807868', '687880' ]] # very lite blue
+
+
+  etlop_df.at[0,'icon_descriptor_df'] = pd.DataFrame(icon_descriptor_list, columns = icon_column_list)
+  etlop_df.at[0,'line_descriptor_df'] = pd.DataFrame(line_descriptor_list, columns = line_column_list)  
 #
 # initialize ETL operations dataframe and gis descriptors
 #
 etlop_df = init_etlop_df()
-init_gis_descriptors()
+init_blue_descriptors()
 
 # debugprint
 #with pd.option_context("display.max_rows", 10, "display.max_columns", 15, "display.min_rows", 10):
@@ -72,7 +94,7 @@ init_gis_descriptors()
 #etlop_df.at[0,"gps_coord_precision"] = int(input('Enter GPS coordinate precision (2-7) : '))
 etlop_df.at[0,"extract_source_type"] = 'cm'
 etlop_df.at[0,"extract_file_name"] = 'Meter.db'
-etlop_df.at[0,"gps_min_delta"] = 50
+etlop_df.at[0,"gps_min_delta"] = 25
 etlop_df.at[0,"gps_coord_precision"] = 5
 
 etlop_df.at[0,"load_file_type"] = input('Enter Save File Type: ')

@@ -39,10 +39,10 @@ def distance_optimizer(etlop_df):
     #
     # list iterator to retrieve points_df (and index)
     ## TODO: change the index to run_index to mirror gps_index.
-    for index, points_df in enumerate(points_df_list): 
+    for index, points_df in enumerate(points_df_list):
+
         # created a generator to have better control over the iteration across
         # the dataframe using itertuple
-        # print('MIN DISTANCE process for run {}'.format(index))
         df_iter = df_itertuple_generator(points_df)
         points_drop_list = list()
         run_df.at[index,"current_points"] = 0
@@ -110,41 +110,39 @@ def startTime_tz_adjust(startTime):
 
 def cm_data_format(etlop_df):
     
-    df = etlop_df.at[0,'run_df']
+    run_df = etlop_df.at[0,'run_df']
     #
     # Cyclemeter Transform
     #
-    # datetime modification using my very first lambda function!
     dt = datetime.datetime
     dt_time = datetime.time
 
-    
-
     # limit stopped time to 23 hours
-    df['stoppedTime'] = df['stoppedTime'].apply(lambda stoppedTime: min(stoppedTime, 23*60*60))
+    run_df['stoppedTime'] = run_df['stoppedTime'].apply(lambda stoppedTime: min(stoppedTime, 23*60*60))
 
-    # xlat startTime from isoformat to gis format
-    #df['startTime'] = df['startTime'].apply(lambda startTime: dt.fromisoformat(startTime).strftime('%Y-%m-%dT%H:%M:%SZ') )
-    df['startTime'] = df['startTime'].apply(lambda startTime: startTime_tz_adjust(startTime))
-    df['formatted_startTime'] = df['startTime'].apply(lambda startTime: startTime.strftime('%A %b %d, %Y @ %I:%m%p'))
+    # xlat startTime from isoformat to gis format and formatted for display in kml balloons
+    run_df['startTime'] = run_df['startTime'].apply(lambda startTime: startTime_tz_adjust(startTime))
+    run_df['formatted_startTime'] = run_df['startTime'].apply(lambda startTime: startTime.strftime('%A %b %d, %Y @ %I:%M%p'))
+
     # convert cyclemeter's time format of seconds to H:M:S using datetime.
-    df['runTime'] = df['runTime'].apply(lambda runTime: dt_time(hour = int(int(runTime) / 3600), 
-                                                                minute = int(int(int(runTime) % 3600) / 60), 
-                                                                second = int(int(int(runTime) % 3600) % 60)).strftime('%H:%M:%S'))
-    df['stoppedTime'] = df['stoppedTime'].apply(lambda runTime: dt_time(hour = int(int(runTime) / 3600), 
-                                                                minute = int(int(int(runTime) % 3600) / 60), 
-                                                                second = int(int(int(runTime) % 3600) % 60)).strftime('%H:%M:%S'))
+    run_df['runTime'] = run_df['runTime'].apply(lambda runTime: time.strftime('%H:%M:%S', time.gmtime(runTime)))
+    run_df['stoppedTime'] = run_df['stoppedTime'].apply(lambda runTime: time.strftime('%H:%M:%S', time.gmtime(runTime)))
 
     # convert from meters to miles (distance/1609).
     # Use decimal "quantize" to strip to exact precision
-    df['distance'] = df['distance'].apply(lambda distance: float(Decimal.from_float(distance / 1609).quantize(Decimal('0.1'))))
+    run_df['distance'] = run_df['distance'].apply(lambda distance: float(Decimal.from_float(distance / 1609).quantize(Decimal('0.1'))))
 
     # convert from meters to feet
     # Use decimal "quantize" to strip to exact precision
     # ascent/descent = meters to feet; maxSpeed = m/s to miles/hour
-    df['ascent'] = df['ascent'].apply(lambda ascent: int(ascent * 3.281))
-    df['descent'] = df['descent'].apply(lambda descent: int(descent * 3.281))
-    df['maxSpeed'] = df['maxSpeed'].apply(lambda maxSpeed: float(Decimal.from_float(maxSpeed * 2.237).quantize(Decimal('0.1'))))
+    run_df['ascent'] = run_df['ascent'].apply(lambda ascent: int(ascent * 3.281))
+    run_df['descent'] = run_df['descent'].apply(lambda descent: int(descent * 3.281))
+    run_df['maxSpeed'] = run_df['maxSpeed'].apply(lambda maxSpeed: float(Decimal.from_float(maxSpeed * 2.237).quantize(Decimal('0.1'))))
 
     # set precision
-    df['calories'] = df['calories'].apply(lambda calories: int(calories))
+    run_df['calories'] = run_df['calories'].apply(lambda calories: int(calories))
+
+    # debug print
+    with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
+        print(run_df)
+
