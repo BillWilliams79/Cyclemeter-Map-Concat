@@ -208,10 +208,11 @@ def cm_sqlite3_extract(etlop_df):
                             run.routeID=56
                     """
 
-    kyle_extract_sql = """
+    notes_extract_sql = """
                         SELECT
                             run.runID,
                             run.routeID,
+                            activityID,
                             route.name,
                             startTime,
                             startTimeZone,
@@ -228,13 +229,13 @@ def cm_sqlite3_extract(etlop_df):
                         JOIN
                             route USING(routeID)
                         WHERE
-                            run.notes LIKE '%jimmy%'
+                            run.notes LIKE '%ben%'
                     """
 
     #
     # extract cyclemeter run into a dataframe where each row is a separate run
     #
-    etlop_df.at[0,"run_df"] = pd.read_sql_query(kyle_extract_sql, con)
+    etlop_df.at[0,"run_df"] = pd.read_sql_query(notes_extract_sql, con)
     # use temp option_context to alter display details of a pandas dataframe
     #with pd.option_context("display.max_rows", 20, "display.max_columns", 15, "display.min_rows", 20):
     #    print(etlop_df.at[0,"run_df"] )
@@ -245,13 +246,20 @@ def cm_sqlite3_extract(etlop_df):
     run_df['current_points'] = 0
     run_df['stripped_points'] = 0
     run_df['line_color_id'] = ''
+    run_df['line_icon_id'] = int()
+    run_df['activity_name'] = ''
+    run_df['average_speed'] = float()
 
-    # per ride color assignment
+    # per ride line color, line icon type and activity name assignment
+    # note: frustratingly cannot find the activityID->activityName mapping in the sql database.
+    #       schema refers to an activityNameStr under activity but has no index, string or mapping.
+    #       only alternative is to hand code values.
     color_cycle = itertools.cycle(etlop_df.at[0,"line_descriptor_df"]['line_color_id'].tolist())
     for run in run_df.itertuples():
         run_df.at[run.Index,'line_color_id'] = next(color_cycle)
- 
- 
+        run_df.at[run.Index,'activity_name'] = 'Ride' if run_df.at[run.Index,'activityID'] == 4 else 'Hike'
+        run_df.at[run.Index,'line_icon_id'] = 1522 if run_df.at[run.Index, 'activityID'] == 4 else 1596
+
     #
     # use list comprehension to iterate over the runIDs and build a list of dataframes with GPS points 
     #todo security
@@ -262,6 +270,7 @@ def cm_sqlite3_extract(etlop_df):
         num_rows, num_cols = points_df.shape
         run_df.at[index,"extracted_points"] = num_rows
         run_df.at[index,"current_points"] = num_rows
-
-    with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
-        print(run_df)
+    
+    #debugprint
+    #with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
+    #    print(run_df)

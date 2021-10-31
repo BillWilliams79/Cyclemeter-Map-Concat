@@ -1,25 +1,38 @@
 from geopy import distance
 import datetime, time
 import pandas as pd
-from decimal import *
+import decimal as decimal
 
-#
-# precision optimizer - drop 2 digits from lat, lon, and ele.
-#
-def precision_optimizer(etl_op):
+Decimal = decimal.Decimal
 
-    precision_reduction = etl_op["gps_precision_reduction"]
 
-    if precision_optimizer == 0:
+def precision_optimizer(etlop_df):
+    #
+    # precision optimizer - drop 2 digits from lat, lon, and ele.
+    #
+    precision = etlop_df.at[0, "gps_coord_precision"]
+
+    if precision == 0:
         #
-        # no work to be done as request is to remove 0 precision
+        # 0 = no work to be done
         #
         return
+    else:
+        precision = Decimal.shift(Decimal('0.19'), -3)
+        print(decimal.Context.prec)
+        print(precision)
 
-    for point in etl_op["gps_points"]:
-       point['latitude']  = point['latitude'][0:len(point['latitude']) - precision_reduction]
-       point['longitude'] = point['longitude'][0:len(point['longitude']) - precision_reduction]
-       point['elevation'] = point['elevation'][0:len(point['elevation']) - precision_reduction]
+    points_df_list = etlop_df.at[0, "gps_df_list"]
+
+    for index, points_df in enumerate(points_df_list):
+        points_df['latitude'] = points_df['latitude'].apply(lambda latitude: float(Decimal.from_float(latitude).quantize(Decimal(precision))))
+        points_df['longitude'] = points_df['longitude'].apply(lambda longitude: float(Decimal.from_float(longitude).quantize(Decimal(precision))))
+ #       points_df['elevation'] = points_df['elevation'].apply(lambda elevation: float(Decimal.from_float(elevation).quantize(Decimal(precision))))
+
+    # debug print
+    with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
+        print(points_df)
+
 
 def df_itertuple_generator(df):
     for gps_point in df.itertuples():
@@ -46,7 +59,8 @@ def distance_optimizer(etlop_df):
         df_iter = df_itertuple_generator(points_df)
         points_drop_list = list()
         run_df.at[index,"current_points"] = 0
- 
+
+        #print(f'Optimize ride # {index}\n')
         #
         # loop assumese current point is set and loop sets compare point next
         # just instatiated the generator and therefore the first element is current
@@ -117,12 +131,18 @@ def cm_data_format(etlop_df):
     dt = datetime.datetime
     dt_time = datetime.time
 
-    # limit stopped time to 23 hours
-    run_df['stoppedTime'] = run_df['stoppedTime'].apply(lambda stoppedTime: min(stoppedTime, 23*60*60))
+    for run in run_df.itertuples():
+        run_df.at[run.Index,'average_speed'] = Decimal(run_df.at[run.Index,'distance'] / run_df.at[run.Index,'runTime'] * 2.237).quantize(Decimal('0.01'))
 
-    # xlat startTime from isoformat to gis format and formatted for display in kml balloons
+    # limit stopped time to 24 hours
+    run_df['stoppedTime'] = run_df['stoppedTime'].apply(lambda stoppedTime: min(stoppedTime, 24*60*60-1))
+
+    # xlat startTime from isoformat to gis format and two formats for display in kml balloons
+    # note: creating and storing two pre-formatted time strings becuase Jinja2 doesn't elegently handle
+    #       strftime formatting in situ.
     run_df['startTime'] = run_df['startTime'].apply(lambda startTime: startTime_tz_adjust(startTime))
     run_df['formatted_startTime'] = run_df['startTime'].apply(lambda startTime: startTime.strftime('%A %b %d, %Y @ %I:%M%p'))
+    run_df['title_formatted_startTime'] = run_df['startTime'].apply(lambda startTime: startTime.strftime('%Y-%b-%d'))
 
     # convert cyclemeter's time format of seconds to H:M:S using datetime.
     run_df['runTime'] = run_df['runTime'].apply(lambda runTime: time.strftime('%H:%M:%S', time.gmtime(runTime)))

@@ -18,7 +18,7 @@ def init_etlop_df():
                          'gpx_name_string', 'gpx_date_string', 'icon_descriptor_df', 'line_descriptor_df',
                          'load_file_type', 'load_file_name']
     
-    etlop_initial_values = [[ str(), str(), int(), int(),
+    etlop_initial_values = [[ str(), str(), str(), int(),
                          pd.DataFrame(), list(),
                          str(), datetime.datetime.now(), pd.DataFrame(), pd.DataFrame(),
                          str(), str() ]]
@@ -58,18 +58,23 @@ def init_blue_descriptors():
   # brutal hard coding of color values
   #
   icon_column_list = ['icon_type', 'icon_color', 'icon_color_id']
-  icon_descriptor_list = [[ '1522', 'ff4c2503', '03254c' ], # dark blue
+  icon_descriptor_list = [[ '1522', 'ff4c2503', '03254c' ], # dark blue - Bike icon
                           [ '1522', 'ffb16711', '1167b1' ], # 
                           [ '1522', 'ffcd7b18', '187bcd' ], #  
                           [ '1522', 'fff49d2a', '2a9df4' ], #  
-                          [ '1522', 'ff807868', '687880' ]] # very lite blue
+                          [ '1522', 'ffddbfa6', 'a6bfdd' ], # very lite blue
+                          [ '1596', 'ff4c2503', '03254c' ], # dark blue - Hike icon
+                          [ '1596', 'ffb16711', '1167b1' ], # 
+                          [ '1596', 'ffcd7b18', '187bcd' ], #  
+                          [ '1596', 'fff49d2a', '2a9df4' ], #  
+                          [ '1596', 'ffddbfa6', 'a6bfdd' ]] # very lite blue
 
   line_column_list = ['line_color', 'line_color_id']
   line_descriptor_list = [['ff4c2503', '03254c' ], # dark blue
                           ['ffb16711', '1167b1' ], # 
                           ['ffcd7b18', '187bcd' ], #  
                           ['fff49d2a', '2a9df4' ], #  
-                          ['ff807868', '687880' ]] # very lite blue
+                          ['ffddbfa6', 'a6bfdd' ]] # very lite blue
 
 
   etlop_df.at[0,'icon_descriptor_df'] = pd.DataFrame(icon_descriptor_list, columns = icon_column_list)
@@ -94,8 +99,8 @@ init_blue_descriptors()
 #etlop_df.at[0,"gps_coord_precision"] = int(input('Enter GPS coordinate precision (2-7) : '))
 etlop_df.at[0,"extract_source_type"] = 'cm'
 etlop_df.at[0,"extract_file_name"] = 'Meter.db'
-etlop_df.at[0,"gps_min_delta"] = 25
-etlop_df.at[0,"gps_coord_precision"] = 5
+etlop_df.at[0,"gps_min_delta"] = 15
+etlop_df.at[0,"gps_coord_precision"] = '2'
 
 etlop_df.at[0,"load_file_type"] = input('Enter Save File Type: ')
 etlop_df.at[0,"load_file_name"] = input('Enter Save File Name: ')
@@ -138,7 +143,7 @@ print(etlop_df.at[0,"gpx_date_string"].strftime('GPS track date\t\t\t: %A %B %d,
 # GPS Transform
 #todo
 print('\nInitiate TRANSFORM...')
-#gps_transform.precision_optimizer(gpx_etl_op)
+#gps_transform.precision_optimizer(etlop_df)
 gps_transform.cm_data_format(etlop_df)
 gps_transform.distance_optimizer(etlop_df)
 
