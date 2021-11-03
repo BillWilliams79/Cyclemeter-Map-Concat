@@ -99,8 +99,8 @@ init_blue_descriptors()
 #etlop_df.at[0,"gps_coord_precision"] = int(input('Enter GPS coordinate precision (2-7) : '))
 etlop_df.at[0,"extract_source_type"] = 'cm'
 etlop_df.at[0,"extract_file_name"] = 'Meter.db'
-etlop_df.at[0,"gps_min_delta"] = 15
-etlop_df.at[0,"gps_coord_precision"] = '2'
+etlop_df.at[0,"gps_min_delta"] = 5
+etlop_df.at[0,"gps_coord_precision"] = '5'
 
 etlop_df.at[0,"load_file_type"] = input('Enter Save File Type: ')
 etlop_df.at[0,"load_file_name"] = input('Enter Save File Name: ')
@@ -143,7 +143,7 @@ print(etlop_df.at[0,"gpx_date_string"].strftime('GPS track date\t\t\t: %A %B %d,
 # GPS Transform
 #todo
 print('\nInitiate TRANSFORM...')
-#gps_transform.precision_optimizer(etlop_df)
+gps_transform.precision_optimizer(etlop_df)
 gps_transform.cm_data_format(etlop_df)
 gps_transform.distance_optimizer(etlop_df)
 

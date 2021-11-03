@@ -189,6 +189,7 @@ def cm_sqlite3_extract(etlop_df):
                         SELECT
                             run.runID,
                             run.routeID,
+                            activityID,
                             route.name,
                             startTime,
                             startTimeZone,
@@ -229,7 +230,7 @@ def cm_sqlite3_extract(etlop_df):
                         JOIN
                             route USING(routeID)
                         WHERE
-                            run.notes LIKE '%ben%'
+                            run.notes LIKE '%kyle%'
                     """
 
     #

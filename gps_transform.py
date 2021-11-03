@@ -18,15 +18,16 @@ def precision_optimizer(etlop_df):
         #
         return
     else:
-        precision = Decimal.shift(Decimal('0.19'), -3)
-        print(decimal.Context.prec)
-        print(precision)
+        new_precision = Decimal.shift(Decimal(1), int(precision))
+        new_precision = 1 / new_precision
+        #print(decimal.Context.prec)
+        print(new_precision)
 
     points_df_list = etlop_df.at[0, "gps_df_list"]
 
     for index, points_df in enumerate(points_df_list):
-        points_df['latitude'] = points_df['latitude'].apply(lambda latitude: float(Decimal.from_float(latitude).quantize(Decimal(precision))))
-        points_df['longitude'] = points_df['longitude'].apply(lambda longitude: float(Decimal.from_float(longitude).quantize(Decimal(precision))))
+        points_df['latitude'] = points_df['latitude'].apply(lambda latitude: float(Decimal.from_float(latitude).quantize(Decimal(new_precision))))
+        points_df['longitude'] = points_df['longitude'].apply(lambda longitude: float(Decimal.from_float(longitude).quantize(Decimal(new_precision))))
  #       points_df['elevation'] = points_df['elevation'].apply(lambda elevation: float(Decimal.from_float(elevation).quantize(Decimal(precision))))
 
     # debug print
