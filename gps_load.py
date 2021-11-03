@@ -18,7 +18,7 @@ def gpx_file_load(etl_op):
 def kml_file_load(etlop_df):
     
     run_df = etlop_df.at[0,'run_df']
-    points_list = etlop_df.at[0,'gps_df_list']
+    points_df_list = etlop_df.at[0,'gps_df_list']
 
     #
     # Now store gps points in kml file using Jinja2
@@ -28,12 +28,12 @@ def kml_file_load(etlop_df):
 
     kml_template = Env.get_template('kml_base_template.kml')
  
-    print('{}.{}'.format(etlop_df.at[0,'load_file_name'],etlop_df.at[0,'load_file_type']))
+    #print('{}.{}'.format(etlop_df.at[0,'load_file_name'],etlop_df.at[0,'load_file_type']))
     handle = open('{}.{}'.format(etlop_df.at[0,'load_file_name'],etlop_df.at[0,'load_file_type']), "w")
 
-    kml_render = kml_template.render(etlop_df = etlop_df,
+    kml_render = kml_template.render(   etlop_df = etlop_df,
                                         run_df = run_df,
-                                        points_df_list = points_list,
+                                        points_df_list = points_df_list,
                                         gpx_name_string = etlop_df.at[0, 'gpx_name_string'],
                                         gpx_date_string = etlop_df.at[0, 'gpx_date_string'])
 

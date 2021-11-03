@@ -21,18 +21,18 @@ def precision_optimizer(etlop_df):
         new_precision = Decimal.shift(Decimal(1), int(precision))
         new_precision = 1 / new_precision
         #print(decimal.Context.prec)
-        print(new_precision)
+        #print(new_precision)
 
     points_df_list = etlop_df.at[0, "gps_df_list"]
 
     for index, points_df in enumerate(points_df_list):
         points_df['latitude'] = points_df['latitude'].apply(lambda latitude: float(Decimal.from_float(latitude).quantize(Decimal(new_precision))))
         points_df['longitude'] = points_df['longitude'].apply(lambda longitude: float(Decimal.from_float(longitude).quantize(Decimal(new_precision))))
- #       points_df['elevation'] = points_df['elevation'].apply(lambda elevation: float(Decimal.from_float(elevation).quantize(Decimal(precision))))
+        #points_df['elevation'] = points_df['elevation'].apply(lambda elevation: float(Decimal.from_float(elevation).quantize(Decimal(precision))))
 
     # debug print
-    with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
-        print(points_df)
+    #with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
+    #    print(points_df)
 
 
 def df_itertuple_generator(df):
@@ -42,6 +42,10 @@ def df_itertuple_generator(df):
 
 def distance_optimizer(etlop_df):
     
+    if etlop_df.at[0,'gps_min_delta'] == 0:
+        #no minimum distance, no need to apply transform
+        return
+
     run_df = etlop_df.at[0,"run_df"]
     points_df_list = etlop_df.at[0, "gps_df_list"]
 
@@ -59,18 +63,21 @@ def distance_optimizer(etlop_df):
         # the dataframe using itertuple
         df_iter = df_itertuple_generator(points_df)
         points_drop_list = list()
-        run_df.at[index,"current_points"] = 0
+        run_df.at[index,"current_points"] = 1
 
         #print(f'Optimize ride # {index}\n')
         #
         # loop assumese current point is set and loop sets compare point next
         # just instatiated the generator and therefore the first element is current
+        if points_df.empty:
+            print(f'Run {index} has no GPS data. Skipping GPS optimize')
+            continue
         gps_point = next(df_iter)
         current_point = (gps_point.latitude, gps_point.longitude)
         
         # iterate over the rows of the points database
         # itertuple generator returns the rows as a namedTuple.
-        # TODO: gps_point should be compare_gps_point. embrace the beauty
+        # T
         for gps_index, gps_point in enumerate(df_iter):
             #
             # process GPS points one dataframe row at a time.
@@ -164,6 +171,6 @@ def cm_data_format(etlop_df):
     run_df['calories'] = run_df['calories'].apply(lambda calories: int(calories))
 
     # debug print
-    with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
-        print(run_df)
+    #with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
+    #    print(run_df)
 
