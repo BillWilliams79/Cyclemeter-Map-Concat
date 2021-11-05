@@ -2,6 +2,7 @@ import re, datetime
 import pandas as pd
 import sqlite3
 import itertools
+import sys
 
 def gpx_file_extract(etl_op):
 
@@ -272,4 +273,4 @@ def cm_sqlite3_extract(etlop_df):
     
     #debugprint
     #with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
-    #    print(run_df)
+    #    print(run_df, file=sys.stderr)

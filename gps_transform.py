@@ -2,6 +2,7 @@ from geopy import distance
 import datetime, time
 import pandas as pd
 import decimal as decimal
+import sys
 
 Decimal = decimal.Decimal
 
@@ -170,7 +171,8 @@ def cm_data_format(etlop_df):
     # set precision
     run_df['calories'] = run_df['calories'].apply(lambda calories: int(calories))
 
-    # debug print
-    #with pd.option_context("display.max_rows", 50, "display.max_columns", 15, "display.min_rows", 50):
-    #    print(run_df)
+    #debugprint
+    with pd.option_context("display.max_rows", 50, "display.max_columns", 30, "display.min_rows", 50):
+        print("post processing", file=sys.stderr)
+        print(run_df, file=sys.stderr)
 

@@ -5,21 +5,46 @@
 {% endblock %}
 
 {% block body %}
-<p class="explainer"> The GPS file has been translated with the results below. 
+<p> The GPS file has been translated with the results below. 
     Please review and select to save the results or restart another ETL operation.
 </p>
 <br>
-<p class="lia"> GPS track name : {{ etl_op["gps_track_name"] }} <br>
-                GPS track date : {{ gps_date }} <br>
-                GPS points extracted : {{ etl_op["imported_points"] }} (file: {{ etl_op["extract_file_name"]}}) <br>
-                GPS points stripped @ {{ etl_op["gps_min_delta"] }}m : {{ etl_op["delta_points_stripped"] }} <br>
-                GPS points after distance strip : {{ etl_op["current_points"] }} <br>
-                <br>
-                GPS points reduced {{ pr }} percent
+<p> Cyclemeter activities extracted : {{run_df.shape[0]}} <br>
+                Activity Total Distance : {{ run_df['distance'].sum() | round }} miles <br>
+                Total GPS points extracted : {{run_df['extracted_points'].sum() }}
+
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Start Time</th>
+                        <th>Ride Time</th>
+                        <th>Stopped Time</th>
+                        <th>Distance</th>
+                        <th>Average Speed</th>
+                        <th>Max Speed</th>
+                        <th>Ascent</th>
+                        <th>Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for run_tuple in run_df.itertuples() %}
+                      <tr>
+                        <td>{{run_tuple.title_formatted_startTime}}</th>
+                        <td>{{ run_tuple.runTime }}</td>
+                        <td>{{ run_tuple.stoppedTime }}</td>
+                        <td>{{ run_tuple.distance }}</td>
+                        <td>{{ run_tuple.average_speed }}</td>
+                        <td>{{ run_tuple.maxSpeed }}</td>
+                        <td>{{ run_tuple.ascent }}</td>
+                        <td>{{ run_tuple.notes }}</td>
+                      </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>                
 </p>
 <br>
 <form method="POST", action="/gps_load" >
-    <input class="xformbutton", type="submit" value="Save">
-    <input class="xformbutton", type="submit" formaction="/" formmethod="GET" value="Cancel">    
+    <input type="submit" value="Save">
+    <input type="submit" formaction="/" formmethod="GET" value="Cancel">    
 </form>
 {% endblock %}

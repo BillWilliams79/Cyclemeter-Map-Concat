@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %} 
-<p class="explainer"> Success! The new GPS track was saved as "{{ etl_op["load_file_name"] }}.gpx".
+<p> Success! The new GPS track was saved as "{{ etlop_df.at[0, "load_file_name"] }}.gpx".
 </p>
 <form method="GET", action="/">
 
