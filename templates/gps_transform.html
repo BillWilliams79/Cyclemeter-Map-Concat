@@ -13,9 +13,9 @@
                 Activity Total Distance : {{ run_df['distance'].sum() | round }} miles <br>
                 Total GPS points extracted : {{run_df['extracted_points'].sum() }}
 
-                <table class="table">
+                <table class="table table-striped table-hover">
                     <thead>
-                      <tr>
+                      <tr class="table-warning sticky-top">
                         <th>Start Time</th>
                         <th>Ride Time</th>
                         <th>Stopped Time</th>
