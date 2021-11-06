@@ -5,46 +5,64 @@
 {% endblock %}
 
 {% block body %}
-<p> The GPS file has been translated with the results below. 
-    Please review and select to save the results or restart another ETL operation.
-</p>
-<br>
-<p> Cyclemeter activities extracted : {{run_df.shape[0]}} <br>
-                Activity Total Distance : {{ run_df['distance'].sum() | round }} miles <br>
-                Total GPS points extracted : {{run_df['extracted_points'].sum() }}
+<div class="container">
+    <p class="lead"> 
+        Cyclemeter data has been extracted and translated with the results below. <br>
+        Please review and select to save the results or restart another ETL operation. <br>
+    </p>
+    <br>
+    <dl class="row"> 
+        <dt class="col-sm-3">Cyclemeter activities extracted</dt> 
+        <dd class="col-sm-9">{{ run_df.shape[0] }}</dd> 
 
-                <table class="table table-striped table-hover">
-                    <thead>
-                      <tr class="table-warning sticky-top">
-                        <th>Start Time</th>
-                        <th>Ride Time</th>
-                        <th>Stopped Time</th>
-                        <th>Distance</th>
-                        <th>Average Speed</th>
-                        <th>Max Speed</th>
-                        <th>Ascent</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        {% for run_tuple in run_df.itertuples() %}
-                      <tr>
-                        <td>{{run_tuple.title_formatted_startTime}}</th>
-                        <td>{{ run_tuple.runTime }}</td>
-                        <td>{{ run_tuple.stoppedTime }}</td>
-                        <td>{{ run_tuple.distance }}</td>
-                        <td>{{ run_tuple.average_speed }}</td>
-                        <td>{{ run_tuple.maxSpeed }}</td>
-                        <td>{{ run_tuple.ascent }}</td>
-                        <td>{{ run_tuple.notes }}</td>
-                      </tr>
-                        {% endfor %}
-                    </tbody>
-                  </table>                
-</p>
-<br>
-<form method="POST", action="/gps_load" >
-    <input type="submit" value="Save">
-    <input type="submit" formaction="/" formmethod="GET" value="Cancel">    
-</form>
+        <dt class="col-sm-3">Activity Total Distance</dt>
+        <dd class="col-sm-9"> {{ run_df['distance'].sum() | round | add_comma}} miles </dd>
+
+        <dt class="col-sm-3">Total GPS points extracted</dt>
+        <dd class="col-sm-9">{{ run_df['extracted_points'].sum() | add_comma }} </dd>
+
+        <dt class="col-sm-3">Total GPS points stripped @ {{ etlop_df.at[0,'gps_min_delta'] }}m</dt>
+        <dd class="col-sm-9">{{run_df['stripped_points'].sum() | add_comma }} </dd>
+
+        <dt class="col-sm-3">Total GPS points remaining</dt>
+        <dd class="col-sm-9">{{run_df['current_points'].sum() | add_comma }} </dd>
+
+        <dt class="col-sm-3">Percentage of GPS points stripped</dt>
+        <dd class="col-sm-9">{{ pr | round }} %</dd>
+    </dl>
+        <form method="POST", action="/gps_load" >
+            <input type="submit" value="Save">
+            <input type="submit" formaction="/" formmethod="GET" value="Cancel">    
+        </form>
+        <br>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr class="table-warning sticky-top">
+                <th class="col-sm-1">Start Time</th>
+                <th class="col-sm-1">Ride Time</th>
+                <th class="col-sm-1">Stopped Time</th>
+                <th class="col-sm-1">Distance</th>
+                <th class="col-sm-1">Average Speed</th>
+                <th class="col-sm-1">Max Speed</th>
+                <th class="col-sm-1">Ascent</th>
+                <th class="col-sm-4">Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for run_tuple in run_df.itertuples() %}
+            <tr>
+                <td>{{run_tuple.title_formatted_startTime }}</th>
+                <td>{{ run_tuple.runTime }}</td>
+                <td>{{ run_tuple.stoppedTime }}</td>
+                <td>{{ run_tuple.distance }}</td>
+                <td>{{ run_tuple.average_speed | round(1)}}</td>
+                <td>{{ run_tuple.maxSpeed }}</td>
+                <td>{{ run_tuple.ascent }}</td>
+                <td>{{ run_tuple.notes }}</td>
+            </tr>
+                {% endfor %}
+            </tbody>
+        </table>                
+    </p>
+</div>
 {% endblock %}

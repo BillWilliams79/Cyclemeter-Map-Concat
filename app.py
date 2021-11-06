@@ -1,12 +1,21 @@
 from flask import Flask, render_template, url_for, request
 from werkzeug.utils import redirect
+
 import gps_transform, gps_extract, gps_load, gps_utils
 import pandas as pd
 import sys
 
 app = Flask(__name__)
-etlop_df = pd.DataFrame()
-run_df = pd.DataFrame()
+
+#
+# utilize flask's version of a custom filter to add commas to an integer
+# note that jinja2 contains its custom filters in its Environment object whereas jinja2 
+# stores custom filters in the App object.
+#
+@app.template_filter('add_comma')
+def add_comma(number):
+    return '{:,}'.format(number)
+
 etlop_df = gps_utils.init_etlop_df()
 gps_utils.init_blue_descriptors(etlop_df)
 

@@ -3,6 +3,11 @@ import datetime, time
 import pandas as pd
 import decimal as decimal
 import sys
+#
+# tried modin with both dart and ray, neither engine reduced the total time
+# to process 100K points on the MAC mini M1
+#  
+#import modin.pandas as pd
 
 Decimal = decimal.Decimal
 
