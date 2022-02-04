@@ -229,13 +229,13 @@ def cm_sqlite3_extract(etlop_df):
                         JOIN
                             route USING(routeID)
                         WHERE
-                            run.notes LIKE '%kyle%'
+                            run.notes LIKE '%chris %'
                     """
 
     #
     # extract cyclemeter run into a dataframe where each row is a separate run
     #
-    etlop_df.at[0,"run_df"] = pd.read_sql_query(cm_extract_sql, con)
+    etlop_df.at[0,"run_df"] = pd.read_sql_query(notes_extract_sql, con)
     # use temp option_context to alter display details of a pandas dataframe
     #with pd.option_context("display.max_rows", 20, "display.max_columns", 15, "display.min_rows", 20):
     #    print(etlop_df.at[0,"run_df"] )

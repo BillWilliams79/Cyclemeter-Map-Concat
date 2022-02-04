@@ -16,6 +16,28 @@ app = Flask(__name__)
 def add_comma(number):
     return '{:,}'.format(number)
 
+@app.template_filter('date_MDY')
+def date_MDY(iso_dt):
+    return iso_dt.strftime('%b %d, %Y')
+
+@app.template_filter('date_HM')
+def date_HM(iso_dt):
+    return iso_dt.strftime('%I:%M%p')
+
+@app.template_filter('strip_leading_zeros')
+def strip_leading_zeros(time_string):
+    #
+    # assuming a properly formated HH:MM:SS input value, reads and strips zeros from HH
+    #
+    if time_string[0:2] == '00':
+        return_time = time_string[3:]
+    elif time_string[0] == '0':
+        return_time = time_string[1:]
+    else:
+        return_time = time_string
+
+    return return_time
+
 etlop_df = gps_utils.init_etlop_df()
 gps_utils.init_blue_descriptors(etlop_df)
 
