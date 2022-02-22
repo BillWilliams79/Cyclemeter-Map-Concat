@@ -206,7 +206,9 @@ def cm_sqlite3_extract(etlop_df):
                         JOIN
                             route USING(routeID)
                         WHERE
-                            run.routeID=56
+                            run.routeID=56 OR run.routeID=10
+                        ORDER BY
+                            run.startTime ASC
                     """
 
     notes_extract_sql = """
@@ -229,13 +231,15 @@ def cm_sqlite3_extract(etlop_df):
                         JOIN
                             route USING(routeID)
                         WHERE
-                            run.notes LIKE '%chris %'
+                            run.notes LIKE '%jim %'
                     """
 
     #
     # extract cyclemeter run into a dataframe where each row is a separate run
     #
-    etlop_df.at[0,"run_df"] = pd.read_sql_query(notes_extract_sql, con)
+    print('priting cm extract sql')
+    print(cm_extract_sql);
+    etlop_df.at[0,"run_df"] = pd.read_sql_query(cm_extract_sql, con)
     # use temp option_context to alter display details of a pandas dataframe
     #with pd.option_context("display.max_rows", 20, "display.max_columns", 15, "display.min_rows", 20):
     #    print(etlop_df.at[0,"run_df"] )

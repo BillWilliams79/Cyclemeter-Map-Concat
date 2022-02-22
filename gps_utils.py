@@ -53,23 +53,23 @@ def init_blue_descriptors(etlop_df):
   # brutal hard coding of color values
   #
   icon_column_list = ['icon_type', 'icon_color', 'icon_color_id']
-  icon_descriptor_list = [[ '1522', 'ff4c2503', '03254c' ], # dark blue - Bike icon
+  icon_descriptor_list = [[ '1522', 'ffb16711', '1167b1' ], # dark blue - Bike icon
                           [ '1522', 'ffb16711', '1167b1' ], # 
-                          [ '1522', 'ffcd7b18', '187bcd' ], #  
-                          [ '1522', 'fff49d2a', '2a9df4' ], #  
-                          [ '1522', 'ffffbfa6', 'a6bfff' ], # very lite blue
-                          [ '1596', 'ff4c2503', '03254c' ], # dark blue - Hike icon
+                          [ '1522', 'ffb16711', '1167b1' ], #  
+                          [ '1522', 'ffb16711', '1167b1' ], #  
+                          [ '1522', 'ffb16711', '1167b1' ], # very lite blue
+                          [ '1596', 'ffb16711', '1167b1' ], # dark blue - Hike icon
                           [ '1596', 'ffb16711', '1167b1' ], # 
-                          [ '1596', 'ffcd7b18', '187bcd' ], #  
-                          [ '1596', 'fff49d2a', '2a9df4' ], #  
-                          [ '1596', 'ffffbfa6', 'a6bfff' ]] # very lite blue
+                          [ '1596', 'ffb16711', '1167b1' ], #  
+                          [ '1596', 'ffb16711', '1167b1' ], #  
+                          [ '1596', 'ffb16711', '1167b1' ]] # very lite blue
 
   line_column_list = ['line_color', 'line_color_id']
-  line_descriptor_list = [['ff4c2503', '03254c' ], # dark blue
+  line_descriptor_list = [['ffb16711', '1167b1' ], # dark blue
                           ['ffb16711', '1167b1' ], # 
-                          ['ffcd7b18', '187bcd' ], #  
-                          ['fff49d2a', '2a9df4' ], #  
-                          ['ffffbfa6', 'a6bfff' ]] # very lite blue
+                          ['ffb16711', '1167b1' ], #  
+                          ['ffb16711', '1167b1' ], #  
+                          ['ffb16711', '1167b1' ]] # very lite blue
 
 
   etlop_df.at[0,'icon_descriptor_df'] = pd.DataFrame(icon_descriptor_list, columns = icon_column_list)

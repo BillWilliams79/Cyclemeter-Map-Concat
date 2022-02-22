@@ -1,3 +1,7 @@
 __pycache__
 meter.db
 .DS_store
+/*.db
+/*.gpx
+/*.kml
+_archive_maps

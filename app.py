@@ -39,6 +39,7 @@ def strip_leading_zeros(time_string):
     return return_time
 
 etlop_df = gps_utils.init_etlop_df()
+print('printing blue')
 gps_utils.init_blue_descriptors(etlop_df)
 
 @app.route("/")
